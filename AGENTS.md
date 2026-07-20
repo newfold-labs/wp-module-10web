@@ -19,6 +19,7 @@ This file gives AI agents a quick orientation to the repo.
 | JS source | `src/editor-support/index.js` |
 | Build output | `build/editor-support/` |
 | Webpack config | `scripts/webpack.config.js` |
+| Translations | `languages/` |
 
 ## Essential commands
 
@@ -26,6 +27,7 @@ This file gives AI agents a quick orientation to the repo.
 composer install
 composer run lint
 composer run fix
+composer run i18n
 
 npm install
 npm run build

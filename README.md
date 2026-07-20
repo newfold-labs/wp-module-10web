@@ -16,12 +16,14 @@ Hidden Newfold module that loads PostHog session replay on the WVC editor admin 
 | Admin asset loading | `includes/TenWeb.php` |
 | PostHog entry point | `src/editor-support/index.js` |
 | Built assets | `build/editor-support/` |
+| Translations | `languages/` |
 
 ## Development
 
 ```bash
 composer install
 composer run lint
+composer run i18n
 
 npm install
 npm run build
@@ -31,11 +33,13 @@ npm run start
 
 Run `npm run build` after changing `src/` and commit the updated files in `build/`.
 
+Run `composer run i18n` after changing user-facing strings in PHP. The text domain is `wp-module-10web` and translation files live in `languages/`.
+
 ## Releases
 
 1. Bump `NFD_TENWEB_MODULE_VERSION` in `bootstrap.php` and the `version` in `package.json`.
-2. Run `npm run build`.
-3. Commit the updated build artifacts.
+2. Run `npm run build` and `composer run i18n`.
+3. Commit the updated build and translation artifacts.
 
 ## Installation
 

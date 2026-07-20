@@ -6,7 +6,7 @@
 	<exclude-pattern>/build</exclude-pattern>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="newfold-tenweb-module" />
+			<property name="text_domain" type="array" value="wp-module-10web" />
 		</properties>
 	</rule>
 </ruleset>

@@ -25,7 +25,7 @@ if ( function_exists( 'add_action' ) ) {
 			register(
 				array(
 					'name'     => 'tenweb',
-					'label'    => __( 'TenWeb', 'newfold-tenweb-module' ),
+					'label'    => __( '10Web', 'wp-module-10web' ),
 					'callback' => function ( Container $container ) {
 						if ( ! defined( 'NFD_TENWEB_DIR' ) ) {
 							define( 'NFD_TENWEB_DIR', __DIR__ );

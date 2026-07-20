@@ -4,7 +4,7 @@ namespace NewfoldLabs\WP\Module\TenWeb;
 use NewfoldLabs\WP\ModuleLoader\Container;
 
 /**
- * Loads TenWeb editor support assets on the WVC editor admin screen.
+ * Loads custom TenWeb functionality.
  */
 class TenWeb {
 
@@ -30,7 +30,24 @@ class TenWeb {
 	public function __construct( Container $container ) {
 		$this->container = $container;
 
+        // Load the module text domain.
+		add_action( 'init', array( $this, 'load_textdomain' ), 100 );
+
+        // Load the editor support assets on the WVC editor admin screen.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_editor_scripts' ) );
+	}
+
+	/**
+	 * Load the module text domain.
+	 *
+	 * @return void
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain(
+			'wp-module-10web',
+			false,
+			NFD_TENWEB_DIR . '/languages'
+		);
 	}
 
 	/**
