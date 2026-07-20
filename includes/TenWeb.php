@@ -35,7 +35,7 @@ class TenWeb {
 		load_plugin_textdomain(
 			'wp-module-10web',
 			false,
-			NFD_TENWEB_DIR . '/languages'
+			dirname( plugin_basename( NFD_TENWEB_DIR . '/bootstrap.php' ) ) . '/languages'
 		);
 	}
 }
