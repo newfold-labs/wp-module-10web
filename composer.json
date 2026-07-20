@@ -21,6 +21,15 @@
             "bootstrap.php"
         ]
     },
+    "repositories": {
+        "newfold": {
+            "type": "composer",
+            "url": "https://newfold-labs.github.io/satis/",
+            "only": [
+                "newfold-labs/*"
+            ]
+        }
+    },
     "require-dev": {
         "newfold-labs/wp-php-standards": "^1.2",
         "wp-cli/i18n-command": "^2.7.0"
@@ -28,6 +37,9 @@
     "config": {
         "platform": {
             "php": "7.4.33"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "scripts": {

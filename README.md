@@ -6,6 +6,7 @@ Hidden Newfold module that loads PostHog session replay on the WVC editor admin 
 
 - Register with the Newfold Module Loader as a hidden, always-active module.
 - Enqueue a bundled PostHog script on the WVC editor screen only.
+- Restrict theme switching and plugin access when the `wvc-theme` is active.
 - Provide no user-facing UI of its own.
 
 ## Key Paths
@@ -13,7 +14,9 @@ Hidden Newfold module that loads PostHog session replay on the WVC editor admin 
 | Purpose | Location |
 |---------|----------|
 | Bootstrap / registration | `bootstrap.php` |
-| Admin asset loading | `includes/TenWeb.php` |
+| Module bootstrap | `includes/TenWeb.php` |
+| Admin restrictions | `includes/AdminRestrictions.php` |
+| Editor asset loading | `includes/EditorSupport.php` |
 | PostHog entry point | `src/editor-support/index.js` |
 | Built assets | `build/editor-support/` |
 | Translations | `languages/` |
@@ -34,6 +37,26 @@ npm run start
 Run `npm run build` after changing `src/` and commit the updated files in `build/`.
 
 Run `composer run i18n` after changing user-facing strings in PHP. The text domain is `wp-module-10web` and translation files live in `languages/`.
+
+## Admin Restrictions
+
+When `wvc-theme` is active, the module locks down WP Admin for customers:
+
+- Theme switching is disabled (menus removed, capability blocked, `pre_set_theme` locked to `wvc-theme`)
+- The Plugins admin page is inaccessible
+- Only approved plugins can load or appear in admin:
+  - Yoast SEO (`wordpress-seo/wp-seo.php` or `wordpress-seo-premium/wp-seo-premium.php`)
+  - WooCommerce (`woocommerce/woocommerce.php`)
+  - Host brand plugin (resolved from the module container)
+  - 10Web Manager (`10web-manager/10web-manager.php`)
+
+Disable restrictions locally with:
+
+```php
+add_filter( 'nfd_tenweb_admin_restrictions_enabled', '__return_false' );
+```
+
+Customize the approved plugin list with the `nfd_tenweb_approved_plugins` filter.
 
 ## Releases
 
