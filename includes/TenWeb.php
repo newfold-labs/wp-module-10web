@@ -24,9 +24,6 @@ class TenWeb {
 		$this->container = $container;
 
 		add_action( 'init', array( $this, 'load_textdomain' ), 100 );
-
-		new AdminRestrictions( $container );
-		new EditorSupport();
 	}
 
 	/**

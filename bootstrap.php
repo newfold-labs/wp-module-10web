@@ -9,6 +9,8 @@
 
 use NewfoldLabs\WP\ModuleLoader\Container;
 use NewfoldLabs\WP\Module\TenWeb\TenWeb;
+use NewfoldLabs\WP\Module\TenWeb\TenWebAdminRestrictionsFeature;
+use NewfoldLabs\WP\Module\TenWeb\TenWebEditorSupportFeature;
 use function NewfoldLabs\WP\ModuleLoader\register;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +19,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! defined( 'NFD_TENWEB_MODULE_VERSION' ) ) {
 	define( 'NFD_TENWEB_MODULE_VERSION', '1.0.0' );
+}
+
+if ( function_exists( 'add_filter' ) ) {
+	add_filter(
+		'newfold/features/filter/register',
+		function ( $features ) {
+			return array_merge(
+				$features,
+				array(
+					TenWebAdminRestrictionsFeature::class,
+					TenWebEditorSupportFeature::class,
+				)
+			);
+		}
+	);
 }
 
 if ( function_exists( 'add_action' ) ) {

@@ -8,7 +8,7 @@ This file gives AI agents a quick orientation to the repo.
 
 - **Stack:** PHP 7.4+. JS built with `@wordpress/scripts`. Expects the Newfold Module Loader from the host plugin.
 
-- **Architecture:** Registers via `NewfoldLabs\WP\ModuleLoader\register()` on `plugins_loaded`. Defines `NFD_TENWEB_*` constants in the registration callback, then instantiates `TenWeb`, which loads the text domain and boots `AdminRestrictions` and `EditorSupport`.
+- **Architecture:** Registers via `NewfoldLabs\WP\ModuleLoader\register()` on `plugins_loaded` for textdomain bootstrapping. Registers `TenWebAdminRestrictionsFeature` and `TenWebEditorSupportFeature` via `newfold/features/filter/register`; each feature boots its class when enabled.
 
 ## Key paths
 
@@ -17,7 +17,9 @@ This file gives AI agents a quick orientation to the repo.
 | Bootstrap | `bootstrap.php` |
 | Module bootstrap | `includes/TenWeb.php` |
 | Admin restrictions | `includes/AdminRestrictions.php` |
+| Admin restrictions feature | `includes/TenWebAdminRestrictionsFeature.php` |
 | Editor asset loading | `includes/EditorSupport.php` |
+| Editor support feature | `includes/TenWebEditorSupportFeature.php` |
 | JS source | `src/editor-support/index.js` |
 | Build output | `build/editor-support/` |
 | Webpack config | `scripts/webpack.config.js` |
