@@ -1,2 +1,107 @@
-# wp-module-10web
-Module for managing 10web specifics
+# WordPress 10Web Module
+
+Hidden Newfold module that loads PostHog session replay on the WVC editor admin screen (`admin.php?page=wvc-editor`).
+
+## Module Responsibilities
+
+- Register with the Newfold Module Loader as a hidden, always-active module.
+- Enqueue a bundled PostHog script on the WVC editor screen only (feature: `tenwebEditorSupport`).
+- Restrict theme switching and plugin access when the `wvc-theme` is active (feature: `tenwebAdminRestrictions`).
+- Provide no user-facing UI of its own.
+
+## Key Paths
+
+| Purpose | Location |
+|---------|----------|
+| Bootstrap / registration | `bootstrap.php` |
+| Module bootstrap | `includes/TenWeb.php` |
+| Admin restrictions | `includes/AdminRestrictions.php` |
+| Admin restrictions feature | `includes/TenWebAdminRestrictionsFeature.php` |
+| Editor asset loading | `includes/EditorSupport.php` |
+| Editor support feature | `includes/TenWebEditorSupportFeature.php` |
+| PostHog entry point | `src/editor-support/index.js` |
+| Built assets | `build/editor-support/` |
+| Translations | `languages/` |
+
+## Development
+
+```bash
+composer install
+composer run lint
+composer run i18n
+
+npm install
+npm run build
+npm run lint
+npm run start
+```
+
+Run `npm run build` after changing `src/` and commit the updated files in `build/`.
+
+Run `composer run i18n` after changing user-facing strings in PHP. The text domain is `wp-module-10web` and translation files live in `languages/`.
+
+## Feature Flags
+
+Both capabilities register with `newfold/features/filter/register` and default to **on**:
+
+| Feature key | Class | Behavior |
+|-------------|-------|----------|
+| `tenwebAdminRestrictions` | `TenWebAdminRestrictionsFeature` | Theme/plugin admin lockdown on `wvc-theme` sites |
+| `tenwebEditorSupport` | `TenWebEditorSupportFeature` | PostHog session replay on the WVC editor screen |
+
+Toggle via WP-CLI:
+
+```bash
+wp newfold features disable tenwebAdminRestrictions
+wp newfold features enable tenwebEditorSupport
+```
+
+On Bluehost, toggles are also available on the hidden admin page at `admin.php?page=bluehost#/admin`.
+
+## Admin Restrictions
+
+When `wvc-theme` is active and the `tenwebAdminRestrictions` feature is enabled, the module locks down WP Admin for customers:
+
+- Theme switching is disabled (menus removed, capability blocked, `pre_set_theme` locked to `wvc-theme`)
+- The Plugins admin page is inaccessible
+- Only approved plugins can load or appear in admin:
+  - Yoast SEO (`wordpress-seo/wp-seo.php` or `wordpress-seo-premium/wp-seo-premium.php`)
+  - WooCommerce (`woocommerce/woocommerce.php`)
+  - Host brand plugin (resolved from the module container)
+  - 10Web Manager (`10web-manager/10web-manager.php`)
+
+Disable restrictions locally with either the feature API or filter:
+
+```php
+add_filter( 'nfd_tenweb_admin_restrictions_enabled', '__return_false' );
+```
+
+```bash
+wp newfold features disable tenwebAdminRestrictions
+```
+
+Customize the approved plugin list with the `nfd_tenweb_approved_plugins` filter.
+
+## Releases
+
+1. Bump `NFD_TENWEB_MODULE_VERSION` in `bootstrap.php` and the `version` in `package.json`.
+2. Run `npm run build` and `composer run i18n`.
+3. Commit the updated build and translation artifacts.
+
+## Installation
+
+### 1. Add the Newfold Satis to your `composer.json`.
+
+```bash
+composer config repositories.newfold composer https://newfold-labs.github.io/satis
+```
+
+### 2. Require the `newfold-labs/wp-module-10web` package.
+
+```bash
+composer require newfold-labs/wp-module-10web
+```
+
+The host plugin must already load the Newfold Module Loader. This module registers itself on `plugins_loaded` and requires no additional setup.
+
+[More on Newfold WordPress Modules](https://github.com/newfold-labs/wp-module-loader)

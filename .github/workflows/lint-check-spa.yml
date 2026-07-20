@@ -1,0 +1,41 @@
+name: 'Lint Checker: SPA'
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/**/*.js'
+  pull_request:
+    types: [opened, edited, reopened, ready_for_review]
+    paths:
+      - 'src/**/*.js'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  lint-check-spa:
+    name: Run JS Lint Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - uses: technote-space/get-diff-action@f27caffdd0fb9b13f4fc191c016bb4e0632844af # v6.1.2
+        with:
+          PATTERNS: |
+            +(src)/**/*.js
+
+      - name: Run JS Lint
+        run: npx wp-scripts lint-js ${{ env.GIT_DIFF }}
+        if: "!! env.GIT_DIFF"
