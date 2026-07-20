@@ -1,13 +1,15 @@
 <?php
+/**
+ * TenWeb module for integrating 10Web features into the plugin.
+ *
+ * Note: Class namespace uses "TenWeb" (PSR-4 compliance); brand references use "10Web".
+ *
+ * @package NewfoldLabs\WP\Module\TenWeb
+ */
 
 use NewfoldLabs\WP\ModuleLoader\Container;
 use NewfoldLabs\WP\Module\TenWeb\TenWeb;
 use function NewfoldLabs\WP\ModuleLoader\register;
-
-/**
- * TenWeb module for integrating 10Web features into the plugin.
- * Note: Class namespace uses "TenWeb" (PSR-4 compliance); brand references use "10Web".
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;

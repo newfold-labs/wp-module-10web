@@ -129,7 +129,7 @@ class AdminRestrictions {
 	 * @param array    $args    Additional arguments.
 	 * @return string[]
 	 */
-	public function restrict_capabilities( $caps, $cap, $user_id, $args ) {
+	public function restrict_capabilities( $caps, $cap, $user_id, $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- map_meta_cap callback signature.
 		$restricted_caps = array(
 			'switch_themes',
 			'edit_themes',
