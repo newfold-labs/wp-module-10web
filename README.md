@@ -5,7 +5,7 @@ Hidden Newfold module that loads PostHog session replay on the WVC editor admin 
 ## Module Responsibilities
 
 - Register with the Newfold Module Loader as a hidden, always-active module.
-- Enqueue a bundled PostHog script on the WVC editor screen only (feature: `tenwebEditorSupport`).
+- Enqueue a bundled PostHog script on the WVC editor screen only (feature: `tenwebEditorSupport`). Enqueues on `admin_init` because the WVC editor exits before `admin_enqueue_scripts`.
 - Restrict theme switching and plugin access when the `wvc-theme` is active (feature: `tenwebAdminRestrictions`).
 - Provide no user-facing UI of its own.
 

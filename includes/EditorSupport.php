@@ -17,7 +17,9 @@ class EditorSupport {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_editor_scripts' ) );
+		// The WVC editor exits during admin_init before admin_enqueue_scripts runs.
+		add_action( 'admin_init', array( $this, 'maybe_enqueue_editor_scripts' ), 9 );
+		add_action( 'load-post.php', array( $this, 'maybe_enqueue_editor_scripts' ), 9 );
 	}
 
 	/**
@@ -25,9 +27,8 @@ class EditorSupport {
 	 *
 	 * @return void
 	 */
-	public function enqueue_editor_scripts() {
-		$screen = get_current_screen();
-		if ( ! $screen || ! isset( $screen->id ) || false === strpos( $screen->id, 'wvc-editor' ) ) {
+	public function maybe_enqueue_editor_scripts() {
+		if ( ! $this->is_wvc_editor_request() ) {
 			return;
 		}
 
@@ -45,5 +46,30 @@ class EditorSupport {
 			$asset['version'],
 			false
 		);
+	}
+
+	/**
+	 * Whether the current request is loading the WVC editor.
+	 *
+	 * @return bool
+	 */
+	public function is_wvc_editor_request() {
+		if ( ! is_admin() ) {
+			return false;
+		}
+
+		global $pagenow;
+
+		if ( 'admin.php' === $pagenow ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- admin page slug check only.
+			return isset( $_GET['page'] ) && 'wvc-editor' === sanitize_text_field( wp_unslash( $_GET['page'] ) );
+		}
+
+		if ( 'post.php' === $pagenow ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- editor action check only.
+			return isset( $_GET['action'] ) && 'wvc-editor' === sanitize_text_field( wp_unslash( $_GET['action'] ) );
+		}
+
+		return false;
 	}
 }
