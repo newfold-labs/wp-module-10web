@@ -1,6 +1,6 @@
 {
   "name": "@newfold-labs/wp-module-10web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A module for integrating 10Web features into the plugin.",
   "private": true,
   "license": "GPL-2.0-or-later",
