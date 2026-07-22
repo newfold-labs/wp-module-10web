@@ -70,8 +70,11 @@ class AdminRestrictions {
 			'wordpress-seo/wp-seo.php',
 			'wordpress-seo-premium/wp-seo-premium.php',
 			'woocommerce/woocommerce.php',
-			'10web-manager/10web-manager.php',
-			$this->container->plugin()->basename,
+			'wp-plugin-payments-shipping/wp-plugin-payments-shipping.php',
+			'google-site-kit/google-site-kit.php',
+			'akismet/akismet.php',
+			'hello.php',
+			$this->container->plugin()->basename, // brand plugin
 		);
 
 		/**
