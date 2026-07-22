@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'NFD_TENWEB_MODULE_VERSION' ) ) {
-	define( 'NFD_TENWEB_MODULE_VERSION', '1.0.1' );
+	define( 'NFD_TENWEB_MODULE_VERSION', '1.0.2' );
 }
 
 if ( function_exists( 'add_filter' ) ) {
