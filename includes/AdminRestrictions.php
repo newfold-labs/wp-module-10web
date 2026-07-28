@@ -69,8 +69,10 @@ class AdminRestrictions {
 		$approved = array(
 			'wordpress-seo/wp-seo.php',
 			'wordpress-seo-premium/wp-seo-premium.php',
+			'wpseo-woocommerce/wpseo-woocommerce.php',
 			'woocommerce/woocommerce.php',
 			'wp-plugin-payments-shipping/wp-plugin-payments-shipping.php',
+			'wp-plugin-ai-store/wp-plugin-ai-store.php',
 			'google-site-kit/google-site-kit.php',
 			'akismet/akismet.php',
 			'hello.php',
