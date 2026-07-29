@@ -74,6 +74,9 @@ class AdminRestrictions {
 			'woocommerce/woocommerce.php',
 			'wp-plugin-payments-shipping/wp-plugin-payments-shipping.php',
 			'wp-plugin-ai-store/wp-plugin-ai-store.php',
+			// 10Web AI Builder Kit. Installs the approved theme, then removes itself.
+			// Approved so it is not deactivated before its self-removal can run.
+			'ai-builder-kit/ai-builder-kit.php',
 			'google-site-kit/google-site-kit.php',
 			'akismet/akismet.php',
 			'hello.php',
