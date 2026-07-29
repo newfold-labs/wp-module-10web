@@ -23,6 +23,13 @@ class AdminRestrictions {
 	protected $container;
 
 	/**
+	 * Whether to bypass the active plugins filter while the approved list is enforced.
+	 *
+	 * @var bool
+	 */
+	protected $bypass_active_plugins_filter = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Container $container The module container.
@@ -88,7 +95,13 @@ class AdminRestrictions {
 		 *
 		 * @param string[] $approved Approved plugin basenames.
 		 */
-		$approved = apply_filters( 'nfd_tenweb_approved_plugins', $approved );
+		$filtered = apply_filters( 'nfd_tenweb_approved_plugins', $approved );
+
+		// Ignore a malformed filter return rather than fataling on every request.
+		// Falling back to the defaults also keeps the brand plugin approved.
+		if ( is_array( $filtered ) ) {
+			$approved = $filtered;
+		}
 
 		return array_values( array_unique( array_filter( $approved ) ) );
 	}
@@ -129,21 +142,19 @@ class AdminRestrictions {
 		}
 
 		/*
-		 * Drop our own filter for the duration. Both deactivate_plugins() and
-		 * is_plugin_active() read active_plugins through get_option(), so with
-		 * the filter attached they would only ever see the approved subset and
+		 * Bypass our own filter for the duration. Both deactivate_plugins() and
+		 * is_plugin_active() read active_plugins through get_option(), so while
+		 * the filter is applying they would only ever see the approved subset and
 		 * skip every plugin that needs deactivating.
 		 *
-		 * The original priority is captured and restored so this leaves the hook
-		 * exactly as it was found, and the restore runs even if a third party
+		 * A flag is used rather than remove_filter() because has_filter() reports
+		 * only the first priority a callback is attached at. If the callback were
+		 * ever attached more than once, the remaining copy would keep filtering
+		 * and the enforcement would silently do nothing. The flag also avoids
+		 * mutating global hook state, and is restored even if a third party
 		 * deactivation callback throws.
 		 */
-		$callback   = array( $this, 'filter_active_plugins' );
-		$was_hooked = has_filter( 'option_active_plugins', $callback );
-
-		if ( false !== $was_hooked ) {
-			remove_filter( 'option_active_plugins', $callback, $was_hooked );
-		}
+		$this->bypass_active_plugins_filter = true;
 
 		try {
 			$active     = get_option( 'active_plugins', array() );
@@ -159,9 +170,7 @@ class AdminRestrictions {
 
 			deactivate_plugins( $unapproved );
 		} finally {
-			if ( false !== $was_hooked ) {
-				add_filter( 'option_active_plugins', $callback, $was_hooked );
-			}
+			$this->bypass_active_plugins_filter = false;
 		}
 	}
 
@@ -239,7 +248,7 @@ class AdminRestrictions {
 	 * @return mixed
 	 */
 	public function filter_active_plugins( $plugins ) {
-		if ( ! is_array( $plugins ) ) {
+		if ( $this->bypass_active_plugins_filter || ! is_array( $plugins ) ) {
 			return $plugins;
 		}
 
