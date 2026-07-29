@@ -130,21 +130,36 @@ class AdminRestrictions {
 		 * is_plugin_active() read active_plugins through get_option(), so with
 		 * the filter attached they would only ever see the approved subset and
 		 * skip every plugin that needs deactivating.
+		 *
+		 * The original priority is captured and restored so this leaves the hook
+		 * exactly as it was found, and the restore runs even if a third party
+		 * deactivation callback throws.
 		 */
-		remove_filter( 'option_active_plugins', array( $this, 'filter_active_plugins' ) );
+		$callback   = array( $this, 'filter_active_plugins' );
+		$was_hooked = has_filter( 'option_active_plugins', $callback );
 
-		$active     = get_option( 'active_plugins', array() );
-		$unapproved = is_array( $active ) ? array_values( array_diff( $active, $approved ) ) : array();
+		if ( false !== $was_hooked ) {
+			remove_filter( 'option_active_plugins', $callback, $was_hooked );
+		}
 
-		if ( ! empty( $unapproved ) ) {
+		try {
+			$active     = get_option( 'active_plugins', array() );
+			$unapproved = is_array( $active ) ? array_values( array_diff( $active, $approved ) ) : array();
+
+			if ( empty( $unapproved ) ) {
+				return;
+			}
+
 			if ( ! function_exists( 'deactivate_plugins' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 
 			deactivate_plugins( $unapproved );
+		} finally {
+			if ( false !== $was_hooked ) {
+				add_filter( 'option_active_plugins', $callback, $was_hooked );
+			}
 		}
-
-		add_filter( 'option_active_plugins', array( $this, 'filter_active_plugins' ) );
 	}
 
 	/**
