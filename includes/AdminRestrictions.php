@@ -35,6 +35,7 @@ class AdminRestrictions {
 		}
 
 		add_action( 'admin_menu', array( $this, 'remove_admin_menus' ), 999 );
+		add_action( 'admin_init', array( $this, 'enforce_approved_plugins' ), 5 );
 		add_action( 'admin_init', array( $this, 'block_restricted_admin_pages' ) );
 		add_filter( 'map_meta_cap', array( $this, 'restrict_capabilities' ), 10, 4 );
 		add_filter( 'option_active_plugins', array( $this, 'filter_active_plugins' ) );
@@ -87,6 +88,63 @@ class AdminRestrictions {
 		$approved = apply_filters( 'nfd_tenweb_approved_plugins', $approved );
 
 		return array_values( array_unique( array_filter( $approved ) ) );
+	}
+
+	/**
+	 * Deactivate active plugins that are not on the approved list.
+	 *
+	 * Filtering `option_active_plugins` cannot stop an unapproved plugin from
+	 * loading. WordPress reads that option and includes every active plugin in
+	 * wp-settings.php before `plugins_loaded` fires, and this class is only
+	 * constructed on `plugins_loaded`. The filter is therefore registered after
+	 * the plugins have already run, which leaves them fully loaded while
+	 * `is_plugin_active()` reports them as inactive.
+	 *
+	 * Deactivating persists the approved set to the database so the unapproved
+	 * plugins stop loading from the next request onward. The filter is kept in
+	 * place as a second layer for anything reactivated outside of WP Admin.
+	 *
+	 * @return void
+	 */
+	public function enforce_approved_plugins() {
+		// Network activations live in a separate site option and would be
+		// deactivated across the whole network from a single site's context.
+		if ( is_multisite() ) {
+			return;
+		}
+
+		$approved = $this->get_approved_plugin_basenames();
+
+		/*
+		 * Never run without the brand plugin on the approved list. It carries
+		 * this module, so deactivating it would remove the restrictions along
+		 * with the customer's control panel.
+		 */
+		$brand_basename = $this->container->plugin()->basename;
+		if ( empty( $brand_basename ) || ! in_array( $brand_basename, $approved, true ) ) {
+			return;
+		}
+
+		/*
+		 * Drop our own filter for the duration. Both deactivate_plugins() and
+		 * is_plugin_active() read active_plugins through get_option(), so with
+		 * the filter attached they would only ever see the approved subset and
+		 * skip every plugin that needs deactivating.
+		 */
+		remove_filter( 'option_active_plugins', array( $this, 'filter_active_plugins' ) );
+
+		$active     = get_option( 'active_plugins', array() );
+		$unapproved = is_array( $active ) ? array_values( array_diff( $active, $approved ) ) : array();
+
+		if ( ! empty( $unapproved ) ) {
+			if ( ! function_exists( 'deactivate_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
+			deactivate_plugins( $unapproved );
+		}
+
+		add_filter( 'option_active_plugins', array( $this, 'filter_active_plugins' ) );
 	}
 
 	/**
