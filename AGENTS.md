@@ -17,6 +17,7 @@ This file gives AI agents a quick orientation to the repo.
 | Bootstrap | `bootstrap.php` |
 | Module bootstrap | `includes/TenWeb.php` |
 | Admin restrictions | `includes/AdminRestrictions.php` |
+| WVC theme detection | `includes/ThemeSupport.php` |
 | Admin restrictions feature | `includes/TenWebAdminRestrictionsFeature.php` |
 | Editor asset loading | `includes/EditorSupport.php` |
 | Editor support feature | `includes/TenWebEditorSupportFeature.php` |

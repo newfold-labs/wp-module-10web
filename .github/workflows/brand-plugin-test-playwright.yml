@@ -53,3 +53,18 @@ jobs:
       plugin-branch: 'develop'
       artifact-name: 'wp-plugin-bluehost-develop'
     secrets: inherit
+
+  # Runs against the paired wp-plugin-bluehost feature branch before the module is released.
+  bluehost-feature:
+    name: Bluehost Feature Branch Build and Test Playwright
+    needs: setup
+    permissions:
+      contents: read
+    uses: newfold-labs/workflows/.github/workflows/module-plugin-test-playwright.yml@main
+    with:
+      module-repo: ${{ github.repository }}
+      module-branch: ${{ needs.setup.outputs.branch }}
+      plugin-repo: 'newfold-labs/wp-plugin-bluehost'
+      plugin-branch: 'feature/tenweb-wvc-theme-gating'
+      artifact-name: 'wp-plugin-bluehost-tenweb-wvc-theme-gating'
+    secrets: inherit
