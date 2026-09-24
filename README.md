@@ -28,6 +28,7 @@ Hidden Newfold module that loads PostHog session replay on the WVC editor admin 
 ```bash
 composer install
 composer run lint
+composer run test
 composer run i18n
 
 npm install
@@ -56,7 +57,7 @@ wp newfold features disable tenwebAdminRestrictions
 wp newfold features enable tenwebEditorSupport
 ```
 
-On Bluehost, toggles are also available on the hidden admin page at `admin.php?page=bluehost#/admin`.
+On Bluehost, toggles are also available on the hidden admin page at `admin.php?page=bluehost#/admin` when `wvc-theme` is active (`NewfoldRuntime.wordpress.isWvcTheme`).
 
 ## Admin Restrictions
 

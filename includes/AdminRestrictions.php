@@ -13,7 +13,7 @@ class AdminRestrictions {
 	 *
 	 * @var string
 	 */
-	const APPROVED_THEME = 'wvc-theme';
+	const APPROVED_THEME = ThemeSupport::WVC_THEME_SLUG;
 
 	/**
 	 * Dependency injection container.
@@ -56,7 +56,7 @@ class AdminRestrictions {
 	 * @return bool
 	 */
 	public function should_apply_restrictions() {
-		if ( self::APPROVED_THEME !== get_template() ) {
+		if ( ! ThemeSupport::is_wvc_theme_active() ) {
 			return false;
 		}
 

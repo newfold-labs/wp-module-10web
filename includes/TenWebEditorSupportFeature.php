@@ -21,6 +21,15 @@ class TenWebEditorSupportFeature extends \NewfoldLabs\WP\Module\Features\Feature
 	protected $value = true;
 
 	/**
+	 * TenWeb editor support is only meaningful on WVC editor sites.
+	 *
+	 * @return bool
+	 */
+	public function canToggle() {
+		return parent::canToggle() && ThemeSupport::is_wvc_theme_active();
+	}
+
+	/**
 	 * Initialize editor support assets when the feature is enabled.
 	 */
 	public function initialize() {

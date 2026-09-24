@@ -23,6 +23,15 @@ class TenWebAdminRestrictionsFeature extends \NewfoldLabs\WP\Module\Features\Fea
 	protected $value = true;
 
 	/**
+	 * TenWeb admin toggles are only meaningful on WVC editor sites.
+	 *
+	 * @return bool
+	 */
+	public function canToggle() {
+		return parent::canToggle() && ThemeSupport::is_wvc_theme_active();
+	}
+
+	/**
 	 * Initialize admin restrictions when the feature is enabled.
 	 */
 	public function initialize() {
